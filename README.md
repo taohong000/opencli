@@ -283,6 +283,33 @@ See **[TESTING.md](./TESTING.md)** for how to run and write tests.
 - **Node API errors** — Ensure Node.js >= 20. Some dependencies require modern Node APIs.
 - **Daemon issues** — Check status: `curl localhost:19825/status` · View logs: `curl localhost:19825/logs`
 
+## Syncing Your Fork
+
+If you cloned your own fork, keep the original repository as `upstream` and your fork as `origin`.
+
+```bash
+git remote -v
+git remote add upstream https://github.com/jackwener/opencli.git
+```
+
+When the upstream repository gets new commits, sync them into your local `main` branch and then push to your fork:
+
+```bash
+git fetch upstream
+git checkout main
+git merge upstream/main
+git push origin main
+```
+
+If you prefer a linear history, you can use `rebase` instead of `merge`:
+
+```bash
+git fetch upstream
+git checkout main
+git rebase upstream/main
+git push origin main
+```
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=jackwener/opencli&type=Date)](https://star-history.com/#jackwener/opencli&Date)

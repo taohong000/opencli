@@ -410,6 +410,36 @@ opencli cascade https://api.example.com/data
   - 查看扩展日志：`curl localhost:19825/logs`
 
 
+## Fork 同步上游仓库
+
+如果你克隆的是自己的 fork，建议保留：
+
+- `origin` 指向你自己的仓库
+- `upstream` 指向原始仓库
+
+```bash
+git remote -v
+git remote add upstream https://github.com/jackwener/opencli.git
+```
+
+当上游仓库有新提交时，可以按下面的流程同步到本地 `main`，再推送回自己的 fork：
+
+```bash
+git fetch upstream
+git checkout main
+git merge upstream/main
+git push origin main
+```
+
+如果你更想保持线性历史，也可以把 `merge` 换成 `rebase`：
+
+```bash
+git fetch upstream
+git checkout main
+git rebase upstream/main
+git push origin main
+```
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=jackwener/opencli&type=Date)](https://star-history.com/#jackwener/opencli&Date)
