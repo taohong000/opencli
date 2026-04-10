@@ -113,6 +113,25 @@ git clone git@github.com:jackwener/opencli.git && cd opencli && npm install && n
 1. Open `chrome://extensions` and enable **Developer mode** (top-right toggle).
 2. Click **Load unpacked** and select the `extension/` directory from this repository.
 
+**Open a dedicated extension browser with a persistent profile**
+
+```bash
+npm run extension-browser
+```
+
+This launcher keeps the repository clean by reading everything from environment variables instead of hardcoding a personal setup:
+
+- `OPENCLI_EXTENSION_PROFILE_DIR`: reuse a specific persistent browser profile
+- `OPENCLI_EXTENSION_DIR`: override the extension directory (defaults to `extension/`)
+- `OPENCLI_EXTENSION_TARGET_URL`: open a specific page after launch
+- `OPENCLI_BROWSER_EXECUTABLE`: force a specific Chrome/Chromium/Edge executable
+
+To inspect the resolved config without opening a browser:
+
+```bash
+npm run extension-browser -- --print-config
+```
+
 ---
 
 ## Prerequisites

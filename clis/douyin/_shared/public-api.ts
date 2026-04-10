@@ -13,8 +13,19 @@ export interface DouyinVideo {
   aweme_id: string;
   desc?: string;
   video?: {
+    vid?: string;
     duration?: number;
+    download_addr?: {
+      uri?: string;
+      url_list?: string[];
+    };
     play_addr?: {
+      uri?: string;
+      url_list?: string[];
+    };
+  };
+  music?: {
+    play_url?: {
       url_list?: string[];
     };
   };
@@ -29,6 +40,10 @@ export interface DouyinVideoListResponse {
 
 export interface DouyinCommentListResponse {
   comments?: DouyinComment[];
+}
+
+export interface DouyinVideoDetailResponse {
+  aweme_detail?: DouyinVideo | null;
 }
 
 export async function fetchDouyinUserVideos(
@@ -53,6 +68,27 @@ export async function fetchDouyinUserVideos(
   ) as DouyinVideoListResponse;
 
   return data.aweme_list || [];
+}
+
+export async function fetchDouyinVideoDetail(
+  page: IPage,
+  awemeId: string,
+): Promise<DouyinVideo | null> {
+  const params = new URLSearchParams({
+    aweme_id: awemeId,
+    aid: '6383',
+  });
+
+  const data = await browserFetch(
+    page,
+    'GET',
+    `https://www.douyin.com/aweme/v1/web/aweme/detail/?${params.toString()}`,
+    {
+      headers: { referer: `https://www.douyin.com/video/${awemeId}` },
+    },
+  ) as DouyinVideoDetailResponse;
+
+  return data.aweme_detail ?? null;
 }
 
 export async function fetchDouyinComments(

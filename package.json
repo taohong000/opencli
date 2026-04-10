@@ -46,6 +46,7 @@
     "clean-dist": "node scripts/clean-dist.cjs",
     "clean-yaml": "node scripts/clean-yaml.cjs",
     "copy-yaml": "node scripts/copy-yaml.cjs",
+    "extension-browser": "node scripts/open-extension-browser.mjs",
     "start": "node dist/src/main.js",
     "start:bun": "bun dist/src/main.js",
     "postinstall": "node scripts/postinstall.js || true; node scripts/fetch-adapters.js || true",
