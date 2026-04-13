@@ -1,10 +1,32 @@
 import { describe, expect, it } from 'vitest';
+import { createRequire } from 'node:module';
 import path from 'node:path';
-import {
+
+interface ExtensionBrowserConfig {
+  extensionDir: string;
+  profileDir: string;
+  targetUrl: string;
+}
+
+const require = createRequire(import.meta.url);
+const launcherLib = require('../scripts/open-extension-browser-lib.mjs') as {
+  buildBrowserLaunchArgs: (config: ExtensionBrowserConfig) => string[];
+  resolveBrowserExecutable: (
+    env?: NodeJS.ProcessEnv,
+    existsSync?: (candidate: string) => boolean,
+  ) => string | null;
+  resolveExtensionBrowserConfig: (
+    env?: NodeJS.ProcessEnv,
+    repoRoot?: string,
+    existsSync?: (candidate: string) => boolean,
+  ) => ExtensionBrowserConfig;
+};
+
+const {
   buildBrowserLaunchArgs,
   resolveBrowserExecutable,
   resolveExtensionBrowserConfig,
-} from '../scripts/open-extension-browser-lib.mjs';
+} = launcherLib;
 
 describe('open-extension-browser-lib', () => {
   it('prefers an explicit profile directory from env', () => {
@@ -23,7 +45,7 @@ describe('open-extension-browser-lib', () => {
   it('reuses the fresh extension profile when it exists', () => {
     const repoRoot = 'D:\\repo\\opencli';
     const freshProfile = path.join(repoRoot, '.chrome-extension-profile-opencli-fresh');
-    const config = resolveExtensionBrowserConfig({}, repoRoot, (candidate) => candidate === freshProfile);
+    const config = resolveExtensionBrowserConfig({}, repoRoot, (candidate: string) => candidate === freshProfile);
 
     expect(config.profileDir).toBe(freshProfile);
   });
