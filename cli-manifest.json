@@ -5174,31 +5174,6 @@
   },
   {
     "site": "douyin",
-    "name": "play-url",
-    "description": "Get a temporary play URL for a Douyin aweme",
-    "domain": "www.douyin.com",
-    "strategy": "cookie",
-    "browser": true,
-    "args": [
-      {
-        "name": "aweme-id",
-        "type": "str",
-        "required": true,
-        "positional": true,
-        "help": "Douyin aweme ID"
-      }
-    ],
-    "columns": [
-      "aweme_id",
-      "page_url",
-      "play_url"
-    ],
-    "type": "ts",
-    "modulePath": "douyin/play-url.js",
-    "sourceFile": "douyin\\play-url.ts"
-  },
-  {
-    "site": "douyin",
     "name": "profile",
     "description": "获取账号信息",
     "domain": "creator.douyin.com",
