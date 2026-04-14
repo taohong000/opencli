@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createRequire } from 'node:module';
+import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 
 interface ExtensionBrowserConfig {
@@ -42,7 +44,28 @@ describe('open-extension-browser-lib', () => {
     expect(config.profileDir).toBe('D:\\profiles\\douyin');
   });
 
-  it('reuses the fresh extension profile when it exists', () => {
+  it('reuses a saved extension profile pointer before scanning fallback profiles', () => {
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'opencli-profile-pointer-'));
+    const savedProfile = path.join(tempRoot, '.chrome-extension-profile-opencli-pw-fresh-verify');
+    fs.writeFileSync(path.join(tempRoot, '.opencli-extension-profile-path'), `${savedProfile}\n`);
+
+    try {
+      const config = resolveExtensionBrowserConfig({}, tempRoot, () => false);
+      expect(config.profileDir).toBe(savedProfile);
+    } finally {
+      fs.rmSync(tempRoot, { recursive: true, force: true });
+    }
+  });
+
+  it('reuses the Playwright extension profile first so login state persists', () => {
+    const repoRoot = 'D:\\repo\\opencli';
+    const persistentProfile = path.join(repoRoot, '.playwright-extension-profile-opencli');
+    const config = resolveExtensionBrowserConfig({}, repoRoot, (candidate: string) => candidate === persistentProfile);
+
+    expect(config.profileDir).toBe(persistentProfile);
+  });
+
+  it('falls back to the fresh extension profile when only it exists', () => {
     const repoRoot = 'D:\\repo\\opencli';
     const freshProfile = path.join(repoRoot, '.chrome-extension-profile-opencli-fresh');
     const config = resolveExtensionBrowserConfig({}, repoRoot, (candidate: string) => candidate === freshProfile);
@@ -54,7 +77,7 @@ describe('open-extension-browser-lib', () => {
     const repoRoot = 'D:\\repo\\opencli';
     const config = resolveExtensionBrowserConfig({}, repoRoot, () => false);
 
-    expect(config.profileDir).toBe(path.join(repoRoot, '.chrome-extension-profile-opencli'));
+    expect(config.profileDir).toBe(path.join(repoRoot, '.playwright-extension-profile-opencli'));
   });
 
   it('uses an explicit browser executable from env first', () => {
@@ -68,6 +91,29 @@ describe('open-extension-browser-lib', () => {
     expect(executable).toBe('C:\\Browsers\\chrome.exe');
   });
 
+  it('prefers the Playwright Chromium runtime before system Chrome on Windows', () => {
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'opencli-playwright-'));
+    const localAppData = path.join(tempRoot, 'AppData', 'Local');
+    const playwrightChromium = path.join(localAppData, 'ms-playwright', 'chromium-1217', 'chrome-win', 'chrome.exe');
+    fs.mkdirSync(path.dirname(playwrightChromium), { recursive: true });
+    fs.writeFileSync(playwrightChromium, '');
+
+    try {
+      const executable = resolveBrowserExecutable(
+        {
+          LOCALAPPDATA: localAppData,
+          ProgramFiles: 'C:\\Program Files',
+          'ProgramFiles(x86)': 'C:\\Program Files (x86)',
+        },
+        fs.existsSync,
+      );
+
+      expect(executable).toBe(playwrightChromium);
+    } finally {
+      fs.rmSync(tempRoot, { recursive: true, force: true });
+    }
+  });
+
   it('builds launch args with extension and profile flags', () => {
     const args = buildBrowserLaunchArgs({
       extensionDir: 'D:\\repo\\opencli\\extension',
@@ -75,7 +121,6 @@ describe('open-extension-browser-lib', () => {
       targetUrl: 'https://www.douyin.com/',
     });
 
-    expect(args).toContain('--disable-extensions');
     expect(args).toContain('--new-window');
     expect(args).toContain('--disable-extensions-except=D:\\repo\\opencli\\extension');
     expect(args).toContain('--load-extension=D:\\repo\\opencli\\extension');

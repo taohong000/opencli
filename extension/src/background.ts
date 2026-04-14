@@ -245,7 +245,7 @@ let initialized = false;
 function initialize(): void {
   if (initialized) return;
   initialized = true;
-  chrome.alarms.create('keepalive', { periodInMinutes: 0.4 }); // ~24 seconds
+  chrome.alarms.create('keepalive', { periodInMinutes: 0.5 }); // Chrome minimum: ~30 seconds
   executor.registerListeners();
   void connect();
   console.log('[opencli] OpenCLI extension initialized');
@@ -262,6 +262,10 @@ chrome.runtime.onStartup.addListener(() => {
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === 'keepalive') void connect();
 });
+
+// Service workers can be started for events other than install/startup.
+// Initialize on module load so unpacked-extension sessions connect reliably.
+initialize();
 
 // ─── Popup status API ───────────────────────────────────────────────
 

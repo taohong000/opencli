@@ -184,6 +184,10 @@ Open a dedicated extension browser with a persistent profile:
 npm run extension-browser
 ```
 
+By default this launcher reuses `.chrome-extension-profile-opencli/`, so site logins such as Douyin stay available across restarts. Set `OPENCLI_EXTENSION_PROFILE_DIR` if you want a different persistent profile.
+
+On Windows, the launcher now prefers a local Playwright Chromium runtime when available, which avoids managed-Chrome policies that can block unpacked extensions from loading.
+
 This launcher keeps the repository clean by reading everything from environment variables instead of hardcoding a personal setup:
 
 - `OPENCLI_EXTENSION_PROFILE_DIR`: reuse a specific persistent browser profile
