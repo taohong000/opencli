@@ -5252,6 +5252,75 @@
   },
   {
     "site": "douyin",
+    "name": "favorite-collections",
+    "description": "List my Douyin favorite collections",
+    "domain": "www.douyin.com",
+    "strategy": "cookie",
+    "browser": true,
+    "args": [
+      {
+        "name": "limit",
+        "type": "int",
+        "default": 20,
+        "required": false,
+        "help": "Number of collections to fetch"
+      }
+    ],
+    "columns": [
+      "id",
+      "title",
+      "item_count",
+      "url"
+    ],
+    "type": "js",
+    "modulePath": "douyin/favorite-collections.js",
+    "sourceFile": "douyin\\favorite-collections.js",
+    "navigateBefore": "https://www.douyin.com"
+  },
+  {
+    "site": "douyin",
+    "name": "favorite-items",
+    "description": "List items from a Douyin favorite collection",
+    "domain": "www.douyin.com",
+    "strategy": "cookie",
+    "browser": true,
+    "args": [
+      {
+        "name": "collection-id",
+        "type": "str",
+        "required": true,
+        "positional": true,
+        "help": "Douyin favorite collection ID"
+      },
+      {
+        "name": "limit",
+        "type": "int",
+        "default": 20,
+        "required": false,
+        "help": "Maximum number of items to fetch"
+      },
+      {
+        "name": "all",
+        "type": "boolean",
+        "required": false,
+        "help": "Fetch all items in the collection"
+      }
+    ],
+    "columns": [
+      "id",
+      "type",
+      "title",
+      "author",
+      "published_at",
+      "url"
+    ],
+    "type": "js",
+    "modulePath": "douyin/favorite-items.js",
+    "sourceFile": "douyin\\favorite-items.js",
+    "navigateBefore": "https://www.douyin.com"
+  },
+  {
+    "site": "douyin",
     "name": "hashtag",
     "description": "话题搜索 / AI推荐 / 热点词",
     "domain": "creator.douyin.com",
@@ -17809,6 +17878,77 @@
     "modulePath": "zhihu/favorite.js",
     "sourceFile": "zhihu\\favorite.js",
     "navigateBefore": true
+  },
+  {
+    "site": "zhihu",
+    "name": "favorite-collections",
+    "description": "List my Zhihu favorite collections",
+    "domain": "www.zhihu.com",
+    "strategy": "cookie",
+    "browser": true,
+    "args": [
+      {
+        "name": "limit",
+        "type": "int",
+        "default": 20,
+        "required": false,
+        "help": "Number of collections to fetch"
+      }
+    ],
+    "columns": [
+      "id",
+      "title",
+      "item_count",
+      "visibility",
+      "updated_at",
+      "url"
+    ],
+    "type": "js",
+    "modulePath": "zhihu/favorite-collections.js",
+    "sourceFile": "zhihu\\favorite-collections.js",
+    "navigateBefore": "https://www.zhihu.com"
+  },
+  {
+    "site": "zhihu",
+    "name": "favorite-items",
+    "description": "List items from a Zhihu favorite collection",
+    "domain": "www.zhihu.com",
+    "strategy": "cookie",
+    "browser": true,
+    "args": [
+      {
+        "name": "collection-id",
+        "type": "str",
+        "required": true,
+        "positional": true,
+        "help": "Zhihu collection ID"
+      },
+      {
+        "name": "limit",
+        "type": "int",
+        "default": 20,
+        "required": false,
+        "help": "Maximum number of items to fetch"
+      },
+      {
+        "name": "all",
+        "type": "boolean",
+        "required": false,
+        "help": "Fetch all items in the collection"
+      }
+    ],
+    "columns": [
+      "id",
+      "type",
+      "title",
+      "author",
+      "published_at",
+      "url"
+    ],
+    "type": "js",
+    "modulePath": "zhihu/favorite-items.js",
+    "sourceFile": "zhihu\\favorite-items.js",
+    "navigateBefore": "https://www.zhihu.com"
   },
   {
     "site": "zhihu",

@@ -3,7 +3,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { cli, getRegistry, Strategy } from './registry.js';
-import { loadManifestEntries } from './build-manifest.js';
+import { buildManifest, loadManifestEntries } from './build-manifest.js';
 
 describe('manifest helper rules', () => {
   const tempDirs: string[] = [];
@@ -155,4 +155,14 @@ describe('manifest helper rules', () => {
     getRegistry().delete(screenKey);
     getRegistry().delete(statusKey);
   });
+
+  it('includes local favorite adapters that should be discoverable in the built manifest', async () => {
+    const manifest = await buildManifest();
+    const names = new Set(manifest.map((entry) => `${entry.site}/${entry.name}`));
+
+    expect(names.has('douyin/favorite-collections')).toBe(true);
+    expect(names.has('douyin/favorite-items')).toBe(true);
+    expect(names.has('zhihu/favorite-collections')).toBe(true);
+    expect(names.has('zhihu/favorite-items')).toBe(true);
+  }, 30000);
 });
