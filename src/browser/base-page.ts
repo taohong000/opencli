@@ -24,7 +24,6 @@ import {
   waitForDomStableJs,
 } from './dom-helpers.js';
 import { formatSnapshot } from '../snapshotFormatter.js';
-
 export abstract class BasePage implements IPage {
   protected _lastUrl: string | null = null;
   /** Cached previous snapshot hashes for incremental diff marking */
@@ -34,6 +33,27 @@ export abstract class BasePage implements IPage {
 
   abstract goto(url: string, options?: { waitUntil?: 'load' | 'none'; settleMs?: number }): Promise<void>;
   abstract evaluate(js: string): Promise<unknown>;
+
+  /**
+   * Safely evaluate JS with pre-serialized arguments.
+   * Each key in `args` becomes a `const` declaration with JSON-serialized value,
+   * prepended to the JS code. Prevents injection by design.
+   *
+   * Usage:
+   *   page.evaluateWithArgs(`(async () => { return sym; })()`, { sym: userInput })
+   */
+  async evaluateWithArgs(js: string, args: Record<string, unknown>): Promise<unknown> {
+    const declarations = Object.entries(args)
+      .map(([key, value]) => {
+        if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)) {
+          throw new Error(`evaluateWithArgs: invalid key "${key}"`);
+        }
+        return `const ${key} = ${JSON.stringify(value)};`;
+      })
+      .join('\n');
+    return this.evaluate(`${declarations}\n${js}`);
+  }
+
   abstract getCookies(opts?: { domain?: string; url?: string }): Promise<BrowserCookie[]>;
   abstract screenshot(options?: ScreenshotOptions): Promise<string>;
   abstract tabs(): Promise<unknown[]>;
@@ -155,7 +175,7 @@ export abstract class BasePage implements IPage {
     } catch (err) {
       // Log snapshot failure for debugging, then fallback to basic accessibility tree
       if (process.env.DEBUG_SNAPSHOT) {
-        console.error('[snapshot] DOM snapshot failed, falling back to accessibility tree:', (err as Error)?.message?.slice(0, 200));
+        process.stderr.write(`[snapshot] DOM snapshot failed, falling back to accessibility tree: ${(err as Error)?.message?.slice(0, 200)}\n`);
       }
       return this._basicSnapshot(opts);
     }
