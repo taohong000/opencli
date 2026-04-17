@@ -227,8 +227,13 @@ To load the source Browser Bridge extension:
 | **xianyu** | `search` `item` `chat` |
 | **xiaoe** | `courses` `detail` `catalog` `play-url` `content` |
 | **quark** | `ls` `mkdir` `mv` `rename` `rm` `save` `share-tree` |
+| **uiverse** | `code` `preview` |
+| **nowcoder** | `hot` `trending` `topics` `recommend` `creators` `companies` `jobs` `search` `suggest` `experience` `referral` `salary` `papers` `practice` `notifications` `detail` |
+| **xiaoyuzhou** | `podcast*` `podcast-episodes*` `episode*` `download*` `transcript*` |
 
 87+ adapters in total — **[→ see all supported sites & commands](./docs/adapters/index.md)**
+
+`*` `opencli xiaoyuzhou podcast`, `podcast-episodes`, `episode`, `download`, and `transcript` require local Xiaoyuzhou credentials in `~/.opencli/xiaoyuzhou.json`.
 
 ## CLI Hub
 
@@ -279,17 +284,23 @@ OpenCLI supports downloading images, videos, and articles from supported platfor
 | **douban** | Images | Poster / still image lists |
 | **pixiv** | Images | Original-quality illustrations, multi-page |
 | **1688** | Images, Videos | Downloads page-visible product media from item pages |
+| **xiaoyuzhou** | Audio, Transcript | Downloads episode audio and transcript JSON/text with local credentials |
 | **zhihu** | Articles (Markdown) | Exports with optional image download |
 | **weixin** | Articles (Markdown) | WeChat Official Account articles |
 
 For video downloads, install `yt-dlp` first: `brew install yt-dlp`
 
 ```bash
-opencli xiaohongshu download abc123 --output ./xhs
+opencli xiaohongshu download "https://www.xiaohongshu.com/search_result/<id>?xsec_token=..." --output ./xhs
+opencli xiaohongshu download "https://xhslink.com/..." --output ./xhs
 opencli bilibili download BV1xxx --output ./bilibili
 opencli twitter download elonmusk --limit 20 --output ./twitter
 opencli 1688 download 841141931191 --output ./1688-downloads
+opencli xiaoyuzhou download 69b3b675772ac2295bfc01d0 --output ./xiaoyuzhou
+opencli xiaoyuzhou transcript 69dd0c98e2c8be31551f6a33 --output ./xiaoyuzhou-transcripts
 ```
+
+`opencli xiaoyuzhou download` and `transcript` require local Xiaoyuzhou credentials in `~/.opencli/xiaoyuzhou.json`.
 
 ## Output Formats
 
